@@ -106,3 +106,4 @@ venv.bak/
 
 #Large files:
 data/
+face_classification/
