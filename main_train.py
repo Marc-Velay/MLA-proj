@@ -55,6 +55,13 @@ with tf.name_scope('cross_entropy'):
 	with tf.name_scope('total'):
 		cross_entropy = -tf.reduce_mean(diff)
 	tf.summary.scalar('cross entropy', cross_entropy)
+	'''with tf.name_scope('total'):
+		class_weight = tf.constant([1, train.PosClassWeight])
+		weights = tf.multiply(y_desired, class_weight)
+
+		#weighted_logits = tf.mul(y, class_weight)
+		#cross_entropy = tf.nn.softmax_cross_entropy_with_logits(weighted_logits, y_desired, name="cross_entropy")
+		cross_entropy = tf.losses.softmax_cross_entropy(onehot_labels=y_desired, logits=y, weights=weights)'''
 
 with tf.name_scope('accuracy'):
 	with tf.name_scope('correct_prediction'):
@@ -62,6 +69,12 @@ with tf.name_scope('accuracy'):
 	with tf.name_scope('accuracy'):
 		accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 	tf.summary.scalar('accuracy', accuracy)
+
+with tf.name_scope('confusion'):
+	with tf.name_scope('correct_prediction'):
+		correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_desired, 1))
+	with tf.name_scope('confusion'):
+		cm = tf.confusion_matrix(labels=tf.argmax(y_desired, 1), predictions=tf.argmax(y, 1), num_classes=2)
 
 with tf.name_scope('learning_rate'):
 	global_step = tf.Variable(0, trainable=False)
@@ -80,6 +93,7 @@ Acc_Test = tf.placeholder("float", name='Acc_Test');
 MeanAcc_summary = tf.summary.merge([tf.summary.scalar('Acc_Train', Acc_Train),tf.summary.scalar('Acc_Test', Acc_Test)])
 
 
+
 print ("-----------------------------------------------------")
 print ("-----------",experiment_name)
 print ("-----------------------------------------------------")
@@ -89,7 +103,7 @@ sess.run(tf.global_variables_initializer())
 writer = tf.summary.FileWriter(experiment_name, sess.graph)
 saver = tf.train.Saver()
 if LoadModel:
-	saver.restore(sess, "./model.ckpt")
+	saver.restore(sess, "./save/model.ckpt")
 
 nbIt = 5000
 for it in range(nbIt):
@@ -108,8 +122,12 @@ for it in range(nbIt):
 		print ("mean accuracy train = %f  test = %f" % (Acc_Train_value,Acc_Test_value ))
 		summary_acc = sess.run(MeanAcc_summary, feed_dict={Acc_Train:Acc_Train_value,Acc_Test:Acc_Test_value})
 		writer.add_summary(summary_acc, it)
+		conf = sess.run(cm, feed_dict={x:train.test_data, y_desired:train.test_labels})
+		print("confusion matrix: ")
+		print(conf)
+
 
 writer.close()
 if not LoadModel:
-	saver.save(sess, "./model.ckpt")
+	saver.save(sess, "./save/model.ckpt")
 sess.close()

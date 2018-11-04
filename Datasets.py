@@ -1,5 +1,7 @@
 
 import numpy as np
+from collections import Counter
+
 
 class DataSet(object):
     def __init__(self, filename_data, filename_labels, nbdata, L2normalize=False, batchSize=128, splitRatio=0.7):
@@ -15,6 +17,7 @@ class DataSet(object):
         self.curPos = 0
         self.x = None
         self.y_desired = None
+        self.PosClassWeight = 0.1369
 
         f = open(filename_data, 'rb')
         self.data = np.empty([nbdata, self.dim], dtype=np.float32)
@@ -27,6 +30,7 @@ class DataSet(object):
         for i in range(nbdata):
             line=int(f.readline())
             self.labels[i,line] = 1
+            #self.labels[i] = line
         f.close()
 
         print ('nb data : ', self.nbdata)
@@ -50,6 +54,8 @@ class DataSet(object):
         if L2normalize:
             self.data /= np.sqrt(np.expand_dims(np.square(self.data).sum(axis=1), 1))
 
+        class_counts = list(np.argmax(self.labels,1)).count(1)
+        print("total members : ", len(self.labels), " class 1 : ",class_counts)
 
     def NextTrainingBatch(self):
         if self.curPos + self.batchSize > self.nbdata:
