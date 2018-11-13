@@ -55,13 +55,6 @@ with tf.name_scope('cross_entropy'):
 	with tf.name_scope('total'):
 		cross_entropy = -tf.reduce_mean(diff)
 	tf.summary.scalar('cross entropy', cross_entropy)
-	'''with tf.name_scope('total'):
-		class_weight = tf.constant([1, train.PosClassWeight])
-		weights = tf.multiply(y_desired, class_weight)
-
-		#weighted_logits = tf.mul(y, class_weight)
-		#cross_entropy = tf.nn.softmax_cross_entropy_with_logits(weighted_logits, y_desired, name="cross_entropy")
-		cross_entropy = tf.losses.softmax_cross_entropy(onehot_labels=y_desired, logits=y, weights=weights)'''
 
 with tf.name_scope('accuracy'):
 	with tf.name_scope('correct_prediction'):
