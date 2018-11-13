@@ -3,13 +3,13 @@ import numpy as np
 import Datasets as ds
 import Layers
 from matplotlib import pyplot as plt
+import pickle
 
 def get_dict(database):
 	xs,ys = database.NextTrainingBatch()
 	return {x:xs,y_desired:ys}
 
 LoadModel = False
-KeepProb_Dropout = 0.9
 
 experiment_name = 'face_classification'
 train = ds.DataSet('./data/db_train.raw','./data/label_train.txt',111430, splitRatio=0.9)
@@ -129,5 +129,5 @@ for it in range(nbIt):
 
 writer.close()
 if not LoadModel:
-	saver.save(sess, "./save/model.ckpt")
+	saver.save(sess, "./save/CNN1_model.ckpt")
 sess.close()

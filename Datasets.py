@@ -1,6 +1,7 @@
 
 import numpy as np
 from collections import Counter
+from random import randrange
 
 
 class DataSet(object):
@@ -58,19 +59,26 @@ class DataSet(object):
         print("total members : ", len(self.labels), " class 1 : ",class_counts)
 
     def NextTrainingBatch(self):
-        if self.curPos + self.batchSize > self.nbdata:
+        '''if self.curPos + self.batchSize > self.nbdata:
             self.curPos = 0
         xs = self.data[self.curPos:self.curPos+self.batchSize,:]
         ys = self.labels[self.curPos:self.curPos+self.batchSize,:]
-        self.curPos += self.batchSize
+        self.curPos += self.batchSize'''
+        xs = list()
+        ys = list()
+        nb_z, nb_o = 0, 0
+        n_sample = round(len(self.data))
+        while nb_z < self.batchSize/2 or nb_o < self.batchSize/2:
+            index = randrange(n_sample)
+            if self.labels[index,0] == 1 and nb_z < self.batchSize/2:
+                xs.append(self.data[index])
+                ys.append(self.labels[index])
+                nb_z+=1
+            elif self.labels[index,1] == 1 and nb_o < self.batchSize/2:
+                xs.append(self.data[index])
+                ys.append(self.labels[index])
+                nb_o+=1
+        #print(np.array(ys).shape)
+        #input()
+
         return xs,ys
-
-
-    def mean_accuracy(self, TFsession,loc_acc,loc_x,loc_y,loc_istrain):
-        acc = 0
-        for i in range(0, self.nbdata, self.batchSize):
-            curBatchSize = min(self.batchSize, self.nbdata - i)
-            dict = {loc_x:self.data[i:i+curBatchSize,:],loc_y:self.labels[i:i+curBatchSize,:],loc_istrain:False}
-            acc += TFsession.run(loc_acc, dict) * 	curBatchSize
-        acc /= self.nbdata
-        return acc
