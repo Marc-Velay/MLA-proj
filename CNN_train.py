@@ -6,20 +6,19 @@ from matplotlib import pyplot as plt
 import pickle
 
 def get_dict(database):
-	xs,ys = database.NextTrainingBatch_resample()
-	return {x:xs,y_desired:ys}
+	xs = database.GetTestBase()
+	return {x:xs}
 
 LoadModel = False
 
 experiment_name = 'face_classification'
-train = ds.DataSet('./data/db_train.raw','./data/label_train.txt',111430, splitRatio=1.)
+train = ds.DataSet('./data/db_train.raw','./data/label_train.txt',111430, splitRatio=0.9)
 #test = ds.DataSet('../DataBases/data_test10k.bin','../DataBases/gender_test10k.bin',10000)
 
-img = train.data[0].reshape((56,56,3)).astype(int)
-plt.imshow(img)
-plt.show()
+#img = train.data[0].reshape((56,56,3)).astype(int)
+#plt.imshow(img)
+#plt.show()
 
-input()
 def mean_accuracy(TFsession,loc_acc, train, x_loc, y_loc, TRAIN):
 		acc = 0
 		if TRAIN:
@@ -97,9 +96,9 @@ sess.run(tf.global_variables_initializer())
 writer = tf.summary.FileWriter(experiment_name, sess.graph)
 saver = tf.train.Saver()
 if LoadModel:
-	saver.restore(sess, "./save/model.ckpt")
+	saver.restore(sess, "./save/modelCNN.ckpt")
 
-nbIt = 10000
+nbIt = 500
 for it in range(nbIt):
 	trainDict = get_dict(train)
 	sess.run(train_step, feed_dict=trainDict)
@@ -110,7 +109,7 @@ for it in range(nbIt):
 		summary_merged = sess.run(merged, feed_dict=trainDict)
 		writer.add_summary(summary_merged, it)
 
-	if it%100 == 0:
+	if it%500 == 0:
 		Acc_Train_value = mean_accuracy(sess,accuracy,train,x, y_desired, True)
 		Acc_Test_value = mean_accuracy(sess,accuracy,train, x, y_desired, False)
 		print ("mean accuracy train = %f  test = %f" % (Acc_Train_value,Acc_Test_value ))
@@ -123,5 +122,5 @@ for it in range(nbIt):
 
 writer.close()
 if not LoadModel:
-	saver.save(sess, "./save/CNN1_model.ckpt")
+	saver.save(sess, "./save/modelCNN.ckpt")
 sess.close()

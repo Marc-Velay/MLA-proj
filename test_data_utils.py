@@ -21,9 +21,5 @@ class DataSet(object):
             self.data[i,:] = np.fromfile(f, dtype=np.uint8, count=self.dim)
         f.close()
 
-    def NextTrainingBatch(self):
-        if self.curPos + self.batchSize > self.nbdata:
-            self.curPos = 0
-        xs = self.data[self.curPos:self.curPos+self.batchSize,:]
-        self.curPos += self.batchSize
-        return xs
+    def GetTestBase(self):
+        return self.data
