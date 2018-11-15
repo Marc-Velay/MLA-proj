@@ -5,6 +5,11 @@ import Layers
 from matplotlib import pyplot as plt
 import pickle
 
+#
+# Ce fichier est utilisé afin de tester la précision de modèles pré-entraînés
+# Est presque identique à CNN_train, sans la partie apprentissage.
+#
+
 def get_dict(database):
 	xs,ys = database.NextTrainingBatch_resample()
 	return {x:xs,y_desired:ys}

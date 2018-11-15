@@ -3,6 +3,7 @@ import numpy as np
 from collections import Counter
 from random import randrange
 
+# Utilitaire pour CNN_test: récupère les données de db_test
 
 class DataSet(object):
     def __init__(self, filename_data, nbdata, L2normalize=False, batchSize=128):

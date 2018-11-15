@@ -5,6 +5,11 @@ import Layers
 from matplotlib import pyplot as plt
 import pickle
 
+#
+# Ce fichier est utilisé afin de générer prediction.txt à partir d'un modèle pré-entraîné.
+# Nous redéfinissons le modèle à l'identique par rapport à CNN_train.py
+#
+
 def get_dict(database):
 	xs = database.GetTestBase()
 	return {x:xs}

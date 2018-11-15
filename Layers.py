@@ -5,6 +5,7 @@ import numpy as np
 
 
 def variable_summaries(var, name):
+	#Permet d'extraire les détails de chaque variable lors de l'execution.
 	with tf.name_scope('summaries'):
 		mean = tf.reduce_mean(var)
 		tf.summary.scalar( name + '/mean', mean)
