@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 import pickle
 
 def get_dict(database):
-	xs,ys = database.NextTrainingBatch()
+	xs,ys = database.NextTrainingBatch_resample()
 	return {x:xs,y_desired:ys}
 
 LoadModel = False
@@ -98,7 +98,7 @@ saver = tf.train.Saver()
 if LoadModel:
 	saver.restore(sess, "./save/model.ckpt")
 
-nbIt = 5000
+nbIt = 10000
 for it in range(nbIt):
 	trainDict = get_dict(train)
 	sess.run(train_step, feed_dict=trainDict)
@@ -109,7 +109,7 @@ for it in range(nbIt):
 		summary_merged = sess.run(merged, feed_dict=trainDict)
 		writer.add_summary(summary_merged, it)
 
-	if it%100 == 50:
+	if it%100 == 0:
 		Acc_Train_value = mean_accuracy(sess,accuracy,train,x, y_desired, True)
 		Acc_Test_value = mean_accuracy(sess,accuracy,train, x, y_desired, False)
 		print ("mean accuracy train = %f  test = %f" % (Acc_Train_value,Acc_Test_value ))

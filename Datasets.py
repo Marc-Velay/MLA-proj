@@ -58,12 +58,7 @@ class DataSet(object):
         class_counts = list(np.argmax(self.labels,1)).count(1)
         print("total members : ", len(self.labels), " class 1 : ",class_counts)
 
-    def NextTrainingBatch(self):
-        '''if self.curPos + self.batchSize > self.nbdata:
-            self.curPos = 0
-        xs = self.data[self.curPos:self.curPos+self.batchSize,:]
-        ys = self.labels[self.curPos:self.curPos+self.batchSize,:]
-        self.curPos += self.batchSize'''
+    def NextTrainingBatch_resample(self):
         xs = list()
         ys = list()
         nb_z, nb_o = 0, 0
@@ -80,5 +75,14 @@ class DataSet(object):
                 nb_o+=1
         #print(np.array(ys).shape)
         #input()
+
+        return xs,ys
+
+    def NextTrainingBatch(self):
+        if self.curPos + self.batchSize > self.nbdata:
+            self.curPos = 0
+        xs = self.data[self.curPos:self.curPos+self.batchSize,:]
+        ys = self.labels[self.curPos:self.curPos+self.batchSize,:]
+        self.curPos += self.batchSize
 
         return xs,ys
