@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import Datasets as ds
+import test_data_utils as ds
 import Layers
 from matplotlib import pyplot as plt
 import pickle
@@ -12,13 +12,17 @@ def get_dict(database):
 LoadModel = True
 
 experiment_name = 'face_classification'
+print("------------- loading data")
 #train = ds.DataSet('./data/db_train.raw','./data/label_train.txt',111430, splitRatio=0.9)
-test = ds.DataSet('../DataBases/db_test.raw',10130)
+test = ds.DataSet('./data/db_test.raw',10130)
 
-#img = train.data[0].reshape((56,56,3)).astype(int)
-#plt.imshow(img)
-#plt.show()
 
+img = test.data[0].reshape((56,56,3)).astype(int)
+plt.imshow(img)
+plt.show()
+
+print("------------- defining CNN")
+input()
 
 with tf.name_scope('input'):
 	x = tf.placeholder(tf.float32, [None, train.dim],name='x')
