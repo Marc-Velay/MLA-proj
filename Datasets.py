@@ -12,6 +12,8 @@ class DataSet(object):
         self.imgSize = 56
         self.data = None
         self.labels = None
+        self.val_data = None
+        self.val_labels = None
         self.test_data = None
         self.test_labels = None
         self.batchSize = batchSize
@@ -51,6 +53,9 @@ class DataSet(object):
 
         self.data, self.test_data = self.data[:int(len(self.data)*splitRatio)], self.data[int(len(self.data)*splitRatio):]
         self.labels, self.test_labels = self.labels[:int(len(self.labels)*splitRatio)], self.labels[int(len(self.labels)*splitRatio):]
+
+        self.data, self.val_data = self.data[:int(len(self.data)*0.8)], self.data[int(len(self.data)*0.8):]
+        self.labels, self.val_labels = self.labels[:int(len(self.labels)*0.8)], self.labels[int(len(self.labels)*0.8):]
 
         if L2normalize:
             self.data /= np.sqrt(np.expand_dims(np.square(self.data).sum(axis=1), 1))

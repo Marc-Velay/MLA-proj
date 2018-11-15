@@ -7,10 +7,9 @@ import pickle
 
 def get_dict(database):
 	xs,ys = database.NextTrainingBatch_resample()
-	#xs,ys = database.NextTrainingBatch()
 	return {x:xs,y_desired:ys}
 
-LoadModel = False
+LoadModel = True
 
 experiment_name = 'face_classification'
 train = ds.DataSet('./data/db_train.raw','./data/label_train.txt',111430, splitRatio=0.9)
@@ -99,18 +98,18 @@ saver = tf.train.Saver()
 if LoadModel:
 	saver.restore(sess, "./save/modelCNN.ckpt")
 
-nbIt = 10000
+nbIt = 501
 for it in range(nbIt):
 	trainDict = get_dict(train)
-	sess.run(train_step, feed_dict=trainDict)
+	#sess.run(train_step, feed_dict=trainDict)
 
-	if it%100 == 0:
+	if it%10 == 0:
 		acc,ce,lr = sess.run([accuracy,cross_entropy,learning_rate], feed_dict=trainDict)
 		print ("it= %6d - rate= %f - cross_entropy= %f - acc= %f" % (it,lr,ce,acc ))
 		summary_merged = sess.run(merged, feed_dict=trainDict)
 		writer.add_summary(summary_merged, it)
 
-	if it%1000 == 0:
+	if it%500 == 0:
 		Acc_Train_value = mean_accuracy(sess,accuracy,train,x, y_desired, True)
 		Acc_Test_value = mean_accuracy(sess,accuracy,train, x, y_desired, False)
 		print ("mean accuracy train = %f  test = %f" % (Acc_Train_value,Acc_Test_value ))
